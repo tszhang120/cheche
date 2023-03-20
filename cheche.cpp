@@ -395,7 +395,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			if (_speed > 200 && abs(*cmdSteer) < 0.1)//mark:目测speed>200跟250的参数一样
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 0.5, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.8, speedController.calculate(currentSpeed));
 			}
 			if (_speed > 130 && abs(*cmdSteer) < 0.1)
 			{
@@ -405,12 +405,12 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			else if (_speed > 60 && abs(*cmdSteer) < 0.2)
 			{
 				//速度较慢且舵角较小时，限定油门
-				*cmdAcc = constrain(0.0, 0.4, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.5, speedController.calculate(currentSpeed));
 			}
 			else if (_speed > 20 && abs(*cmdSteer) < 0.2)
 			{
 				//速度较慢且舵角较小时，限定油门
-				*cmdAcc = constrain(0.0, 0.2, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.4, speedController.calculate(currentSpeed));
 			}
 			else
 			{
