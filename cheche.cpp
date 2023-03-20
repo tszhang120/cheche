@@ -2,7 +2,8 @@
 █	Description: User Module for CyberCruise							█
 █	作者: 杨辰兮 & ChatGPT												█
 █	联系方式: yangchenxi@sjtu.edu.cn										█
-█	日期: 2023.02.13							    						█
+█	日期: 2023.02.13	
+//git使用查询						    						█
 \*▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲*/
 
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
@@ -423,18 +424,18 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 		else
 		{
 			//减速情况下，刹车
-			*cmdAcc = 0;
-			if (_speed > 180 && abs(*cmdSteer) < 0.2)//mark:速度越快，刹车踩得越多
+			*cmdAcc = 0;//mark:速度越快，刹车踩得越多
+			if (currentSpeed - targetSpeed > 180 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.8;
+				*cmdBrake = 0.7;
 			}
-			else if (_speed > 130 && abs(*cmdSteer) < 0.2)
+			else if (currentSpeed - targetSpeed > 120 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.6;
+				*cmdBrake = 0.5;
 			}
-			else if (_speed > 92 && abs(*cmdSteer) < 0.2)
+			else if (currentSpeed - targetSpeed > 60 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.4;
+				*cmdBrake = 0.3;
 			}
 			else
 			{
@@ -483,17 +484,17 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 		{
 			//减速情况下，刹车
 			*cmdAcc = 0;
-			if (_speed > 200 && abs(*cmdSteer) < 0.2)
+		if (currentSpeed - targetSpeed > 200 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.8;
+				*cmdBrake = 0.7;
 			}
-			else if (_speed > 130 && abs(*cmdSteer) < 0.2)
+			else if (currentSpeed - targetSpeed > 140 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.6;
+				*cmdBrake = 0.5;
 			}
-			else if (_speed > 92 && abs(*cmdSteer) < 0.2)
+			else if (currentSpeed - targetSpeed > 80 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.4;
+				*cmdBrake = 0.3;
 			}
 			else
 			{
