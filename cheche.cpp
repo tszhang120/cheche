@@ -390,7 +390,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			if (_speed > 250 && abs(*cmdSteer) < 0.1)
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 0.5, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.8, speedController.calculate(currentSpeed));
 			}
 			if (_speed > 200 && abs(*cmdSteer) < 0.1)//mark:目测speed>200跟250的参数一样
 			{
@@ -506,7 +506,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 	updateGear(cmdGear);
 
 	//窗口可视化
-	cls_visual.Fig2Y(1, 0, 300, 0, 500, 10, "Target V", targetSpeed, "Curvature", minCruve, "Current V", _speed);
+	cls_visual.Fig2Y(1, 0, 400, 0, 500, 10, "Target V", targetSpeed, "Curvature", minCruve, "Current V", _speed);
 	//cls_visual.Fig2Y(2, -0.3, 0.3, -0.5, 0.5, 10, "yaw", _yaw, "yawrate", _yawrate);
 	cls_visual.Fig2Y(1, -1, 1, -1, 1, 10, "Acc", *cmdAcc, "Brake", *cmdBrake);
 }
