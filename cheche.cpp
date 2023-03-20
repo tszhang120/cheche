@@ -508,5 +508,5 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 	//窗口可视化
 	cls_visual.Fig2Y(1, 0, 300, 0, 500, 10, "Target V", targetSpeed, "Curvature", minCruve, "Current V", _speed);
 	//cls_visual.Fig2Y(2, -0.3, 0.3, -0.5, 0.5, 10, "yaw", _yaw, "yawrate", _yawrate);
-	cls_visual.Fig2Y(1, -1, 1, -1, 1, 10, "Acc", *cmdAcc, "Brake", *cmdBrake);
+	cls_visual.Fig2Y(2, -1, 1, -1, 1, 10, "Acc", *cmdAcc, "Brake", *cmdBrake);
 }
