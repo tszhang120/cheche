@@ -307,7 +307,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 	int step_low = 0.05 * _speed;
 
 
-	if (_speed <= 150)              //mark: 原本的计算前方曲率是计算前方10米，20米的点，改进后取为随速度变化
+	if (!isCementRoad)              //mark: 原本的计算前方曲率是计算前方10米，20米的点，改进后取为随速度变化，如果是沙地，就需要更灵敏，监测点靠近
 	{                                 
 		for (fStep = 0; fStep < pin; fStep++)
 		{
@@ -318,7 +318,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			}
 		}
 	}
-	else   //mark:有点怪，应该是用来区分高低速不同取点，但还没动手
+	else   //mark:有点怪，应该是用来区分高低速不同取点，但还没动手，else就是水泥路了
 	{
 		for (fStep = 0; fStep < pin; fStep++)
 		{
@@ -390,22 +390,22 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			if (_speed > 250 && abs(*cmdSteer) < 0.1)
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 0.8, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 1, speedController.calculate(currentSpeed));
 			}
 			if (_speed > 200 && abs(*cmdSteer) < 0.1)//mark:目测speed>200跟250的参数一样
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 0.8, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 1, speedController.calculate(currentSpeed));
 			}
 			if (_speed > 130 && abs(*cmdSteer) < 0.1)
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 0.7, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 1, speedController.calculate(currentSpeed));
 			}
 			else if (_speed > 60 && abs(*cmdSteer) < 0.2)
 			{
 				//速度较慢且舵角较小时，限定油门
-				*cmdAcc = constrain(0.0, 0.5, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.6, speedController.calculate(currentSpeed));
 			}
 			else if (_speed > 20 && abs(*cmdSteer) < 0.2)
 			{
@@ -426,11 +426,11 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			*cmdAcc = 0;//mark:速度越快，刹车踩得越多
 			if (currentSpeed - targetSpeed > 180 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.7;
+				*cmdBrake = 1;
 			}
 			else if (currentSpeed - targetSpeed > 120 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.5;
+				*cmdBrake = 0.8;
 			}
 			else if (currentSpeed - targetSpeed > 60 && abs(*cmdSteer) < 0.2)
 			{
