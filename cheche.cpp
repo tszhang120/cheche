@@ -1,15 +1,14 @@
+
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	Description: User Module for CyberCruise							█
 █	作者: 杨辰兮 & ChatGPT												█
 █	联系方式: yangchenxi@sjtu.edu.cn										█
 █	日期: 2023.02.13				    						█
 \*▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲*/
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	贴士:	您可以折叠 #pragma region 和	#pragma endregion 之间的代码		█
 █	这可以使您获得一次性折叠完成的程序块而不是一个函数的能力					█
 \*▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲*/
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	DLL接口部分，您可以跳过这部分不阅读									█
 █	不要修改这个 #pragma region 中的任何代码!								█
@@ -18,21 +17,17 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
 #include "driver_cruise.h"
 #include "stdio.h"
 #include <ostream>
 #include <fstream>
 #include<algorithm>
-
 #include "class_Visualization.h"
-using namespace std;
+	using namespace std;
 #define PI 3.141592653589793238462643383279
-
 static void userDriverGetParam(float midline[200][2], float yaw, float yawrate, float speed, float acc, float width, int gearbox, float rpm);
 static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, int* cmdGear);
 static int InitFuncPt(int index, void* pt);
-
 // Module Entry Point
 extern "C" int driver_cruise(tModInfo * modInfo)
 {
@@ -44,7 +39,6 @@ extern "C" int driver_cruise(tModInfo * modInfo)
 	modInfo[0].index = 0;
 	return 0;
 }
-
 // Module interface initialization.
 static int InitFuncPt(int, void* pt)
 {
@@ -53,12 +47,10 @@ static int InitFuncPt(int, void* pt)
 	itf->userDriverSetParam = userDriverSetParam;
 	return 0;
 }
-
 //Global variables for vehicle states
 static float _midline[200][2];
 static float _yaw, _yawrate, _speed, _acc, _width, _rpm;
 static int _gearbox;
-
 static void userDriverGetParam(float midline[200][2], float yaw, float yawrate, float speed, float acc, float width, int gearbox, float rpm)
 {
 	for (int i = 0; i < 200; ++i) _midline[i][0] = midline[i][0], _midline[i][1] = midline[i][1];
@@ -71,7 +63,6 @@ static void userDriverGetParam(float midline[200][2], float yaw, float yawrate, 
 	_gearbox = gearbox;
 }
 #pragma endregion >>>
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	上下确界约束函数									 					█
 █	您需要理解它的功能，建议不要修改										█
@@ -87,7 +78,6 @@ double constrain(double lowerBoundary, double upperBoundary, double input)
 		return input;
 }
 #pragma endregion
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	赛道曲率半径计算函数													█
 █	您需要理解它的功能，建议不要修改										█
@@ -100,12 +90,10 @@ typedef struct Circle
 	double r;
 	int sign;
 }circle;
-
 circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
 {
 	double a, b, c, d, e, f;
 	double r, x, y;
-
 	a = 2 * (x2 - x1);
 	b = 2 * (y2 - y1);
 	c = x2 * x2 + y2 * y2 - x1 * x1 - y1 * y1;
@@ -122,7 +110,6 @@ circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
 	return { r,sign };
 }
 #pragma endregion >>>
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	以下是核心控制程序													█
 █	主要输入: _midline, _speed											█
@@ -131,10 +118,8 @@ circle getR(float x1, float y1, float x2, float y2, float x3, float y3)
 █	次要输出: *cmdGear 【本样例中已实现】									█
 █	详细信息请参见用户手册												█
 \*▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲*/
-
 //基于OpenCV的可视化工具，详情请见文档
 cls_VISUAL cls_visual;
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	手动换挡程序															█
 █	可以不用看懂，建议不要修改，除非您是学(Juan)霸(Wang) :P					█
@@ -147,7 +132,6 @@ const float fGearShift[2][7] = //0 for downshift, 1 for upshift
 };
 void updateGear(int* cmdGear)
 {
-
 	if (_speed > fGearShift[1][_gearbox] && _gearbox < 7) //upshift
 	{
 		*cmdGear = _gearbox + 1;
@@ -162,7 +146,6 @@ void updateGear(int* cmdGear)
 	}
 }
 #pragma endregion >>>
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	PID控制器，由ChatGPT生成												█
 █	可选择性修改，需要完全理解												█
@@ -174,7 +157,6 @@ private:
 	double targetValue;		// 目标值
 	double lastError;		// 上一次误差值
 	double errorIntegral;	// 误差积分值
-
 public:
 	void initial(double p, double i, double d, double target)
 	{
@@ -185,7 +167,6 @@ public:
 		lastError = 0;
 		errorIntegral = 0;
 	}
-
 	double calculate(double input)
 	{
 		double error = targetValue - input;
@@ -195,7 +176,6 @@ public:
 		return kp * error + ki * errorIntegral + kd * derivative;
 	}
 };
-
 /*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 █	车辆控制主程序，由ChatGPT自动生成助教完善								█
 █	样例代码仅供参考，请在下方设计实现您的算法								█
@@ -210,7 +190,6 @@ bool flag = false;             //mark：
 double length(float x1, float y1, float x2, float y2) {   //mark:
 	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
-
 static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, int* cmdGear)
 {
 	timecounter++;
@@ -234,7 +213,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 	\*▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲*/
 	double targetAngleError = 0.0; //目标误差
 	double currentAngleError = atan2(_midline[4][0], _midline[4][1]); //当前误差
-                                                                      //mark:拉近舵角判断点位，灵敏度提升
+																	  //mark:拉近舵角判断点位，灵敏度提升
 	//第一帧初始化舵角控制参数，清空积分器和微分器，因为控制目标为恒零，所以只需要初始化一次
 	if (isFirstFrame)
 	{
@@ -247,28 +226,23 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 	}
 	else if (timecounter == 69 && isCementRoad) //mark:水泥路面舵角pid参数
 	{
-		angleController.initial(8.0, 0, 12.0, targetAngleError);	
+		angleController.initial(8.0, 0, 12.0, targetAngleError);
 	}
-
-
 	//舵角PID控制
 	*cmdSteer = constrain(-1.0, 1.0, angleController.calculate(currentAngleError));
 	double lfAngleError = -atan2(
 		_midline[5][0] - _midline[4][0],
 		_midline[5][1] - _midline[4][1]
 	);
-
 	double lfDistance = \
 		_midline[0][0] < 0 ? length(_midline[0][0], _midline[0][1], 0, 0) :
 		-length(_midline[0][0], _midline[0][1], 0, 0);
-
 	double lfStanley_K;
 	circle Curve4Stanley = getR(
 		_midline[0][0], _midline[0][1],
 		_midline[5][0], _midline[5][1],
 		_midline[10][0], _midline[10][1]
 	);
-
 	if (Curve4Stanley.r < 50)
 		lfStanley_K = 200;
 	else if (Curve4Stanley.r < 100)
@@ -277,24 +251,21 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 		lfStanley_K = 25;
 	else
 		lfStanley_K = 10;
-
 	double lfDistanceError = atan(lfStanley_K * lfDistance / _speed);
 	if (!isCementRoad)
 	{
-	    *cmdSteer = (constrain(-1, 1, lfAngleError + lfDistanceError) * 0.1 + constrain(-1.0, 1.0, angleController.calculate(currentAngleError)) * 0.9);
+		*cmdSteer = (constrain(-1, 1, lfAngleError + lfDistanceError) * 0.1 + constrain(-1.0, 1.0, angleController.calculate(currentAngleError)) * 0.9);
 	}
 	else
 	{
 		*cmdSteer = (constrain(-1, 1, lfAngleError + lfDistanceError) * 0.3 + constrain(-1.0, 1.0, angleController.calculate(currentAngleError)) * 0.7);
 	}
-	
 
 	/*▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼*\
 	█	速度控制																█
 	\*▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲*/
 	double targetSpeed;  //目标车速
 	double currentSpeed = _speed;	//当前误差
-
 	//计算前方是直道还是弯道
 	circle myCurve;
 	float minCruve = 500.0;
@@ -303,12 +274,10 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 	if (0.4 * _speed <= 35) pin = 35;
 	else if (0.5 * _speed >= 150) pin = 150;//mark:高速时需要取前方更多的点
 	else pin = 0.45 * _speed;
-	int step_high = 0.1*_speed;
+	int step_high = 0.1 * _speed;
 	int step_low = 0.05 * _speed;
-
-
-	if (!isCementRoad)              //mark: 原本的计算前方曲率是计算前方10米，20米的点，改进后取为随速度变化，如果是沙地，就需要更灵敏，监测点靠近
-	{                                 
+	if (_speed <= 150)              //mark: 原本的计算前方曲率是计算前方10米，20米的点，改进后取为随速度变化
+	{
 		for (fStep = 0; fStep < pin; fStep++)
 		{
 			myCurve = getR(_midline[fStep][0], _midline[fStep][1], _midline[fStep + step_low][0], _midline[fStep + step_low][1], _midline[fStep + step_high][0], _midline[fStep + step_high][1]);
@@ -318,7 +287,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			}
 		}
 	}
-	else   //mark:有点怪，应该是用来区分高低速不同取点，但还没动手，else就是水泥路了
+	else   //mark:有点怪，应该是用来区分高低速不同取点，但还没动手
 	{
 		for (fStep = 0; fStep < pin; fStep++)
 		{
@@ -359,14 +328,14 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 		else if (minCruve > 160)
 			targetSpeed = constrain(290, 320, 0.75 * minCruve + 160);
 		else if (minCruve > 100)
-			targetSpeed = constrain(215, 285, 1.1667*minCruve + 98.333);
+			targetSpeed = constrain(215, 285, 1.1667 * minCruve + 98.333);
 		else if (minCruve > 60)
 			targetSpeed = constrain(150, 215, 1.625 * minCruve + 52.5);
 		else if (minCruve > 20)
 			targetSpeed = constrain(70, 150, 2 * minCruve + 30);
 		else targetSpeed = 60;
 	}
-	
+
 	//每当目标速度变化时初始化PID控制器，重设参数，清空积分器和微分器
 	if (targetSpeed != lastTargetSpeed)
 	{
@@ -381,7 +350,6 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			lastTargetSpeed = targetSpeed;
 		}
 	}
-
 	//控制油门刹车来调节速度
 	if (!isCementRoad && flag)    //mark：如果判断路面成功，且是沙地路面采用此参数
 	{
@@ -390,26 +358,29 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			if (_speed > 250 && abs(*cmdSteer) < 0.1)
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 1, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.8, speedController.calculate(currentSpeed));
 			}
 			if (_speed > 200 && abs(*cmdSteer) < 0.1)//mark:目测speed>200跟250的参数一样
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 1, speedController.calculate(currentSpeed));
+				
+				*cmdAcc = constrain(0.0, 0.8, speedController.calculate(currentSpeed));
 			}
 			if (_speed > 130 && abs(*cmdSteer) < 0.1)
 			{
 				//速度较快且舵角较小时，使用PID控制
-				*cmdAcc = constrain(0.0, 1, speedController.calculate(currentSpeed));
+				*cmdAcc = constrain(0.0, 0.7, speedController.calculate(currentSpeed));
 			}
 			else if (_speed > 60 && abs(*cmdSteer) < 0.2)
 			{
 				//速度较慢且舵角较小时，限定油门
-				*cmdAcc = constrain(0.0, 0.6, speedController.calculate(currentSpeed));
+				
+				*cmdAcc = constrain(0.0, 0.5, speedController.calculate(currentSpeed));
 			}
 			else if (_speed > 20 && abs(*cmdSteer) < 0.2)
 			{
 				//速度较慢且舵角较小时，限定油门
+				
 				*cmdAcc = constrain(0.0, 0.4, speedController.calculate(currentSpeed));
 			}
 			else
@@ -426,11 +397,11 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			*cmdAcc = 0;//mark:速度越快，刹车踩得越多
 			if (currentSpeed - targetSpeed > 180 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 1;
+				*cmdBrake = 0.7;
 			}
 			else if (currentSpeed - targetSpeed > 120 && abs(*cmdSteer) < 0.2)
 			{
-				*cmdBrake = 0.8;
+				*cmdBrake = 0.5;
 			}
 			else if (currentSpeed - targetSpeed > 60 && abs(*cmdSteer) < 0.2)
 			{
@@ -483,7 +454,7 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 		{
 			//减速情况下，刹车
 			*cmdAcc = 0;
-		if (currentSpeed - targetSpeed > 200 && abs(*cmdSteer) < 0.2)
+			if (currentSpeed - targetSpeed > 200 && abs(*cmdSteer) < 0.2)
 			{
 				*cmdBrake = 0.7;
 			}
@@ -501,10 +472,8 @@ static void userDriverSetParam(float* cmdAcc, float* cmdBrake, float* cmdSteer, 
 			}
 		}
 	}
-
 	//更新档位
 	updateGear(cmdGear);
-
 	//窗口可视化
 	cls_visual.Fig2Y(1, 0, 400, 0, 500, 10, "Target V", targetSpeed, "Curvature", minCruve, "Current V", _speed);
 	//cls_visual.Fig2Y(2, -0.3, 0.3, -0.5, 0.5, 10, "yaw", _yaw, "yawrate", _yawrate);
